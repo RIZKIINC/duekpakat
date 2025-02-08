@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data dari Google Sheets</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .search-container input {
+            padding: 10px;
+            width: 300px;
+            font-size: 1rem;
+            border: 2px solid #3498db;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+        }
+
+        .search-container button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-container button:hover {
+            background-color: #2980b9;
+        }
+
+        .total-uang {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #27ae60;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+
+        td {
+            border-bottom: 1px solid #ddd;
+        }
+
+        td:nth-child(2) {
+            text-align: left;
+        }
+
+        .lunas {
+            background-color: #d4edda;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .search-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .search-container input {
+                width: 100%;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+
+            .search-container button {
+                width: 100%;
+                border-radius: 5px;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            th, td {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h2>Data dari Google Sheets</h2>
+
+<!-- Input Pencarian -->
+<div class="search-container">
+    <input type="text" id="searchInput" placeholder="Cari data..." onkeypress="handleKeyPress(event)">
+    <button onclick="searchData()">Cari</button>
+</div>
+
+<!-- Total Uang -->
+<div class="total-uang" id="totalUang"></div>
+
+<!-- Tabel untuk Menampilkan Data -->
+<table>
+    <thead>
+        <tr>
+            <th>NO</th>
+            <th>NAMA</th>
+            <th>ALAMAT</th>
+            <th>BERAS</th>
+            <th>UANG</th>
+        </tr>
+    </thead>
+    <tbody id="data-table"></tbody>
+</table>
+
+<script>
+    let allData = []; // Variabel untuk menyimpan semua data
+
+    // Fungsi untuk mengambil data dari Google Sheets
+    async function fetchData() {
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPB7YyjPk97RJgwWBxzV7JEWkzePePb901UojPqPOBWb_TJgIwKo-7_VLS12oEMMazBpJD45k-ssGT/pub?output=csv';
+        const response = await fetch(sheetUrl);
+        const data = await response.text();
+        const rows = data.split('\n').slice(1); // Menghapus header
+
+        // Simpan semua data ke variabel allData
+        allData = rows;
+
+        // Tampilkan data di tabel
+        displayData(rows);
+    }
+
+    // Fungsi untuk memformat uang dengan pemisah titik
+    function formatUang(nilai) {
+        return `Rp ${parseInt(nilai).toLocaleString('id-ID')}`;
+    }
+
+    // Fungsi untuk menampilkan data di tabel
+    function displayData(data) {
+        const tbody = document.getElementById('data-table');
+        tbody.innerHTML = ''; // Kosongkan tabel sebelum menambahkan data baru
+
+        let totalUang = 0; // Variabel untuk menyimpan total uang
+
+        data.forEach(row => {
+            const columns = row.split(',');
+            const tr = document.createElement('tr');
+
+            // Jika KETERANGAN adalah "LUNAS", tambahkan class "lunas"
+            if (columns[5]?.trim().toUpperCase() === 'LUNAS') {
+                tr.classList.add('lunas');
+            }
+
+            // Tampilkan hanya kolom NO, NAMA, ALAMAT, BERAS, dan UANG
+            columns.slice(0, 5).forEach((column, index) => {
+                const td = document.createElement('td');
+                let cellContent = column.trim();
+
+                // Jika data kosong, isi dengan "-"
+                if (!cellContent) {
+                    cellContent = '-';
+                }
+
+                // Format kolom UANG dengan menambahkan "Rp" dan pemisah titik
+                if (index === 4) { // Kolom UANG adalah indeks ke-4
+                    if (cellContent !== '-') {
+                        cellContent = formatUang(cellContent);
+                        totalUang += parseInt(column.trim()); // Tambahkan ke total uang
+                    } else {
+                        cellContent = '-';
+                    }
+                }
+
+                td.textContent = cellContent;
+                if (index === 1) {
+                    td.style.textAlign = 'left'; // Kolom NAMA rata kiri
+                }
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+
+        // Tampilkan total uang
+        document.getElementById('totalUang').textContent = `Total Uang: ${formatUang(totalUang)}`;
+    }
+
+    // Fungsi untuk mencari data
+    function searchData() {
+        const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+        const filteredData = allData.filter(row => {
+            return row.toLowerCase().includes(searchTerm); // Cari di semua kolom
+        });
+        displayData(filteredData); // Tampilkan hasil pencarian
+    }
+
+    // Fungsi untuk menangani tombol Enter
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            searchData(); // Jalankan pencarian saat tombol Enter ditekan
+        }
+    }
+
+    // Ambil data dari Google Sheets saat halaman dimuat
+    fetchData();
+</script>
+
+</body>
+</html>
