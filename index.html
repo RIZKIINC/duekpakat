@@ -27,6 +27,32 @@
             color: #2c3e50;
         }
 
+        .tab {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .tab button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .tab button:hover {
+            background-color: #2980b9;
+        }
+
+        .tab button.active {
+            background-color: #1c5980;
+        }
+
         .search-container {
             display: flex;
             justify-content: center;
@@ -104,6 +130,16 @@
                 font-size: 1.5rem;
             }
 
+            .tab {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tab button {
+                width: 100%;
+                margin: 5px 0;
+            }
+
             .search-container {
                 flex-direction: column;
                 align-items: center;
@@ -137,6 +173,12 @@
 
 <h2>Buku Tamu</h2>
 
+<!-- Tab untuk Beralih antara Sheet1 dan Sheet2 -->
+<div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'Sheet1')">Sheet 1</button>
+    <button class="tablinks" onclick="openTab(event, 'Sheet2')">Pakat Eri</button>
+</div>
+
 <!-- Input Pencarian -->
 <div class="search-container">
     <input type="text" id="searchInput" placeholder="Cari data..." onkeypress="handleKeyPress(event)">
@@ -147,34 +189,58 @@
 <div class="total-uang" id="totalUang"></div>
 
 <!-- Tabel untuk Menampilkan Data -->
-<table>
-    <thead>
-        <tr>
-            <th>NO</th>
-            <th>NAMA</th>
-            <th>ALAMAT</th>
-            <th>BERAS</th>
-            <th>UANG</th>
-        </tr>
-    </thead>
-    <tbody id="data-table"></tbody>
-</table>
+<div id="Sheet1" class="tabcontent">
+    <table>
+        <thead>
+            <tr>
+                <th>NO</th>
+                <th>NAMA</th>
+                <th>ALAMAT</th>
+                <th>BERAS</th>
+                <th>UANG</th>
+            </tr>
+        </thead>
+        <tbody id="data-table-sheet1"></tbody>
+    </table>
+</div>
+
+<div id="Sheet2" class="tabcontent">
+    <table>
+        <thead>
+            <tr>
+                <th>NO</th>
+                <th>NAMA</th>
+                <th>ALAMAT</th>
+                <th>BERAS</th>
+                <th>UANG</th>
+            </tr>
+        </thead>
+        <tbody id="data-table-sheet2"></tbody>
+    </table>
+</div>
 
 <script>
-    let allData = []; // Variabel untuk menyimpan semua data
+    let allDataSheet1 = []; // Variabel untuk menyimpan data dari Sheet1
+    let allDataSheet2 = []; // Variabel untuk menyimpan data dari Sheet2
+    let currentSheet = 'Sheet1'; // Variabel untuk menyimpan tab yang aktif
 
     // Fungsi untuk mengambil data dari Google Sheets
     async function fetchData() {
-        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPB7YyjPk97RJgwWBxzV7JEWkzePePb901UojPqPOBWb_TJgIwKo-7_VLS12oEMMazBpJD45k-ssGT/pub?output=csv';
-        const response = await fetch(sheetUrl);
-        const data = await response.text();
-        const rows = data.split('\n').slice(1); // Menghapus header
+        const sheet1Url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPB7YyjPk97RJgwWBxzV7JEWkzePePb901UojPqPOBWb_TJgIwKo-7_VLS12oEMMazBpJD45k-ssGT/pub?output=csv';
+        const sheet2Url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPB7YyjPk97RJgwWBxzV7JEWkzePePb901UojPqPOBWb_TJgIwKo-7_VLS12oEMMazBpJD45k-ssGT/pub?gid=1939128832&output=csv';
 
-        // Simpan semua data ke variabel allData
-        allData = rows;
+        // Ambil data dari Sheet1
+        const responseSheet1 = await fetch(sheet1Url);
+        const dataSheet1 = await responseSheet1.text();
+        allDataSheet1 = dataSheet1.split('\n').slice(1);
 
-        // Tampilkan data di tabel
-        displayData(rows);
+        // Ambil data dari Sheet2
+        const responseSheet2 = await fetch(sheet2Url);
+        const dataSheet2 = await responseSheet2.text();
+        allDataSheet2 = dataSheet2.split('\n').slice(1);
+
+        // Tampilkan data dari Sheet1 secara default
+        displayData(allDataSheet1, 'data-table-sheet1');
     }
 
     // Fungsi untuk memformat uang dengan pemisah titik
@@ -183,8 +249,8 @@
     }
 
     // Fungsi untuk menampilkan data di tabel
-    function displayData(data) {
-        const tbody = document.getElementById('data-table');
+    function displayData(data, tableId) {
+        const tbody = document.getElementById(tableId);
         tbody.innerHTML = ''; // Kosongkan tabel sebelum menambahkan data baru
 
         let totalUang = 0; // Variabel untuk menyimpan total uang
@@ -234,10 +300,12 @@
     // Fungsi untuk mencari data
     function searchData() {
         const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
-        const filteredData = allData.filter(row => {
-            return row.toLowerCase().includes(searchTerm); // Cari di semua kolom
-        });
-        displayData(filteredData); // Tampilkan hasil pencarian
+        const filteredData = currentSheet === 'Sheet1' 
+            ? allDataSheet1.filter(row => row.toLowerCase().includes(searchTerm))
+            : allDataSheet2.filter(row => row.toLowerCase().includes(searchTerm));
+        
+        const tableId = currentSheet === 'Sheet1' ? 'data-table-sheet1' : 'data-table-sheet2';
+        displayData(filteredData, tableId);
     }
 
     // Fungsi untuk menangani tombol Enter
@@ -247,8 +315,37 @@
         }
     }
 
+    // Fungsi untuk beralih antara tab
+    function openTab(event, sheetName) {
+        currentSheet = sheetName;
+
+        // Sembunyikan semua tab content
+        const tabcontents = document.getElementsByClassName('tabcontent');
+        for (let i = 0; i < tabcontents.length; i++) {
+            tabcontents[i].style.display = 'none';
+        }
+
+        // Hapus class "active" dari semua tab buttons
+        const tablinks = document.getElementsByClassName('tablinks');
+        for (let i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(' active', '');
+        }
+
+        // Tampilkan tab content yang dipilih dan tambahkan class "active" ke button yang diklik
+        document.getElementById(sheetName).style.display = 'block';
+        event.currentTarget.className += ' active';
+
+        // Tampilkan data dari sheet yang dipilih
+        const tableId = sheetName === 'Sheet1' ? 'data-table-sheet1' : 'data-table-sheet2';
+        const data = sheetName === 'Sheet1' ? allDataSheet1 : allDataSheet2;
+        displayData(data, tableId);
+    }
+
     // Ambil data dari Google Sheets saat halaman dimuat
     fetchData();
+
+    // Buka tab Sheet1 secara default
+    document.getElementsByClassName('tablinks')[0].click();
 </script>
 
 </body>
