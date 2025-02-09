@@ -282,9 +282,9 @@
             const tr = document.createElement('tr');
 
             // Jika KETERANGAN adalah "LUNAS", tambahkan class "lunas"
-            if (columns[5]?.trim().toUpperCase() === 'LUNAS') {
-                tr.classList.add('lunas');
-            }
+            if (columns[4]?.trim().toUpperCase() === 'LUNAS' || columns[5]?.trim().toUpperCase() === 'LUNAS') {tr.classList.add('lunas');
+}
+
 
             // Tampilkan kolom sesuai dengan tab yang aktif
             columns.slice(0, tableId === 'data-table-sheet3' ? 4 : 5).forEach((column, index) => {
