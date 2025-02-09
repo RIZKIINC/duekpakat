@@ -173,10 +173,11 @@
 
 <h2>Buku Tamu</h2>
 
-<!-- Tab untuk Beralih antara Sheet1 dan Sheet2 -->
+<!-- Tab untuk Beralih antara Sheet1, Sheet2, dan Sheet3 -->
 <div class="tab">
     <button class="tablinks" onclick="openTab(event, 'Sheet1')">Sheet 1</button>
     <button class="tablinks" onclick="openTab(event, 'Sheet2')">Pakat Eri</button>
+    <button class="tablinks" onclick="openTab(event, 'Sheet3')">Eri Buka Amplop</button>
 </div>
 
 <!-- Input Pencarian -->
@@ -219,15 +220,31 @@
     </table>
 </div>
 
+<div id="Sheet3" class="tabcontent">
+    <table>
+        <thead>
+            <tr>
+                <th>NO</th>
+                <th>NAMA</th>
+                <th>ALAMAT</th>
+                <th>UANG</th>
+            </tr>
+        </thead>
+        <tbody id="data-table-sheet3"></tbody>
+    </table>
+</div>
+
 <script>
     let allDataSheet1 = []; // Variabel untuk menyimpan data dari Sheet1
     let allDataSheet2 = []; // Variabel untuk menyimpan data dari Sheet2
+    let allDataSheet3 = []; // Variabel untuk menyimpan data dari Sheet3
     let currentSheet = 'Sheet1'; // Variabel untuk menyimpan tab yang aktif
 
     // Fungsi untuk mengambil data dari Google Sheets
     async function fetchData() {
         const sheet1Url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPB7YyjPk97RJgwWBxzV7JEWkzePePb901UojPqPOBWb_TJgIwKo-7_VLS12oEMMazBpJD45k-ssGT/pub?output=csv';
         const sheet2Url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPB7YyjPk97RJgwWBxzV7JEWkzePePb901UojPqPOBWb_TJgIwKo-7_VLS12oEMMazBpJD45k-ssGT/pub?gid=1939128832&output=csv';
+        const sheet3Url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPB7YyjPk97RJgwWBxzV7JEWkzePePb901UojPqPOBWb_TJgIwKo-7_VLS12oEMMazBpJD45k-ssGT/pub?gid=98722503&output=csv';
 
         // Ambil data dari Sheet1
         const responseSheet1 = await fetch(sheet1Url);
@@ -238,6 +255,11 @@
         const responseSheet2 = await fetch(sheet2Url);
         const dataSheet2 = await responseSheet2.text();
         allDataSheet2 = dataSheet2.split('\n').slice(1);
+
+        // Ambil data dari Sheet3
+        const responseSheet3 = await fetch(sheet3Url);
+        const dataSheet3 = await responseSheet3.text();
+        allDataSheet3 = dataSheet3.split('\n').slice(1);
 
         // Tampilkan data dari Sheet1 secara default
         displayData(allDataSheet1, 'data-table-sheet1');
@@ -264,8 +286,8 @@
                 tr.classList.add('lunas');
             }
 
-            // Tampilkan hanya kolom NO, NAMA, ALAMAT, BERAS, dan UANG
-            columns.slice(0, 5).forEach((column, index) => {
+            // Tampilkan kolom sesuai dengan tab yang aktif
+            columns.slice(0, tableId === 'data-table-sheet3' ? 4 : 5).forEach((column, index) => {
                 const td = document.createElement('td');
                 let cellContent = column.trim();
 
@@ -275,7 +297,7 @@
                 }
 
                 // Format kolom UANG dengan menambahkan "Rp" dan pemisah titik
-                if (index === 4) { // Kolom UANG adalah indeks ke-4
+                if ((tableId === 'data-table-sheet3' && index === 3) || (tableId !== 'data-table-sheet3' && index === 4)) {
                     if (cellContent !== '-') {
                         cellContent = formatUang(cellContent);
                         totalUang += parseInt(column.trim()); // Tambahkan ke total uang
@@ -300,11 +322,16 @@
     // Fungsi untuk mencari data
     function searchData() {
         const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
-        const filteredData = currentSheet === 'Sheet1' 
-            ? allDataSheet1.filter(row => row.toLowerCase().includes(searchTerm))
-            : allDataSheet2.filter(row => row.toLowerCase().includes(searchTerm));
-        
-        const tableId = currentSheet === 'Sheet1' ? 'data-table-sheet1' : 'data-table-sheet2';
+        let filteredData;
+        if (currentSheet === 'Sheet1') {
+            filteredData = allDataSheet1.filter(row => row.toLowerCase().includes(searchTerm));
+        } else if (currentSheet === 'Sheet2') {
+            filteredData = allDataSheet2.filter(row => row.toLowerCase().includes(searchTerm));
+        } else if (currentSheet === 'Sheet3') {
+            filteredData = allDataSheet3.filter(row => row.toLowerCase().includes(searchTerm));
+        }
+
+        const tableId = `data-table-${currentSheet.toLowerCase()}`;
         displayData(filteredData, tableId);
     }
 
@@ -336,8 +363,8 @@
         event.currentTarget.className += ' active';
 
         // Tampilkan data dari sheet yang dipilih
-        const tableId = sheetName === 'Sheet1' ? 'data-table-sheet1' : 'data-table-sheet2';
-        const data = sheetName === 'Sheet1' ? allDataSheet1 : allDataSheet2;
+        const tableId = `data-table-${sheetName.toLowerCase()}`;
+        const data = sheetName === 'Sheet1' ? allDataSheet1 : sheetName === 'Sheet2' ? allDataSheet2 : allDataSheet3;
         displayData(data, tableId);
     }
 
