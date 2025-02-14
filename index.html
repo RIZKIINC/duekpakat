@@ -3,377 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buku Tamu</title>
+    <title>Buku Tamu Digital</title>
+    <link rel="icon" href="https://png.pngtree.com/png-vector/20230105/ourmid/pngtree-book-icon-vector-image-png-image_6552370.png" type="image/x-icon">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        /* Reset CSS */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .table-hover tbody tr:hover {
+            background-color: rgba(13, 110, 253, 0.05);
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-            line-height: 1.6;
-            padding: 20px;
+        .status-badge {
+            font-size: 0.8em;
+            padding: 0.35em 0.65em;
         }
-
-        h2 {
-            text-align: center;
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: #2c3e50;
-        }
-
-        .tab {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .tab button {
-            padding: 10px 20px;
-            font-size: 1rem;
-            background-color: #3498db;
+        .total-card {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
             color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 0 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        .tab button:hover {
-            background-color: #2980b9;
-        }
-
-        .tab button.active {
-            background-color: #1c5980;
-        }
-
-        .search-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .search-container input {
-            padding: 10px;
-            width: 300px;
-            font-size: 1rem;
-            border: 2px solid #3498db;
-            border-radius: 5px 0 0 5px;
-            outline: none;
-        }
-
-        .search-container button {
-            padding: 10px 20px;
-            font-size: 1rem;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 0 5px 5px 0;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .search-container button:hover {
-            background-color: #2980b9;
-        }
-
-        .total-uang {
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #27ae60;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            background-color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
-            overflow: hidden;
         }
-
-        th, td {
-            padding: 12px;
-            text-align: center;
-        }
-
-        th {
-            background-color: #3498db;
-            color: white;
+        .currency {
+            font-family: 'Courier New', Courier, monospace;
             font-weight: bold;
         }
-
-        td {
-            border-bottom: 1px solid #ddd;
-        }
-
-        td:nth-child(2) {
-            text-align: left;
-        }
-
-        .lunas {
-            background-color: #d4edda;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            h2 {
-                font-size: 1.5rem;
-            }
-
-            .tab {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .tab button {
-                width: 100%;
-                margin: 5px 0;
-            }
-
-            .search-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .search-container input {
-                width: 100%;
-                border-radius: 5px;
-                margin-bottom: 10px;
-            }
-
-            .search-container button {
-                width: 100%;
-                border-radius: 5px;
-            }
-
-            table {
-                display: block;
-                overflow-x: auto;
-                white-space: nowrap;
-            }
-
-            th, td {
-                padding: 8px;
-                font-size: 0.9rem;
-            }
+        .filter-card {
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
-<body>
+<body class="bg-light">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bold text-primary">Buku Tamu Digital</h1>
+            <p class="lead text-muted">Catatan Tamu dan Transaksi</p>
+        </div>
 
-<h2>Buku Tamu</h2>
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs nav-justified mb-4" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="sheet1-tab" data-bs-toggle="tab" data-bs-target="#sheet1" type="button">Sheet Utama</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sheet2-tab" data-bs-toggle="tab" data-bs-target="#sheet2" type="button">Pakat Eri</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sheet3-tab" data-bs-toggle="tab" data-bs-target="#sheet3" type="button">Eri Buka Amplop</button>
+            </li>
+        </ul>
 
-<!-- Tab untuk Beralih antara Sheet1, Sheet2, dan Sheet3 -->
-<div class="tab">
-    <button class="tablinks" onclick="openTab(event, 'Sheet1')">Sheet 1</button>
-    <button class="tablinks" onclick="openTab(event, 'Sheet2')">Pakat Eri</button>
-    <button class="tablinks" onclick="openTab(event, 'Sheet3')">Eri Buka Amplop</button>
-</div>
+        <!-- Filter Section -->
+        <div class="card filter-card mb-4">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Cari nama atau alamat...">
+                            <button class="btn btn-outline-secondary" type="button" id="clearSearch">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="statusFilter" class="form-select">
+                            <option value="">Semua Status</option>
+                            <option value="LUNAS">Lunas</option>
+                            <option value="BELUM LUNAS">Belum Lunas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="total-card p-3 text-center">
+                            <small class="text-white-50">TOTAL UANG</small>
+                            <div id="totalUang" class="h5 mb-0">Rp 0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<!-- Input Pencarian -->
-<div class="search-container">
-    <input type="text" id="searchInput" placeholder="Cari data..." onkeypress="handleKeyPress(event)">
-    <button onclick="searchData()">Cari</button>
-</div>
+        <!-- Tab Content -->
+        <div class="tab-content" id="myTabContent">
+            <!-- Sheet 1 -->
+            <div class="tab-pane fade show active" id="sheet1" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>#</th>
+                                <th>Nama</th>
+                                <th>Alamat</th>
+                                <th class="text-end">Beras</th>
+                                <th class="text-end">Uang</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-table-sheet1"></tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center" id="pagination-sheet1"></ul>
+                </nav>
+            </div>
 
-<!-- Total Uang -->
-<div class="total-uang" id="totalUang"></div>
+            <!-- Sheet 2 -->
+            <div class="tab-pane fade" id="sheet2" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-info">
+                            <tr>
+                                <th>#</th>
+                                <th>Nama</th>
+                                <th>Alamat</th>
+                                <th class="text-end">Beras</th>
+                                <th class="text-end">Uang</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-table-sheet2"></tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center" id="pagination-sheet2"></ul>
+                </nav>
+            </div>
 
-<!-- Tabel untuk Menampilkan Data -->
-<div id="Sheet1" class="tabcontent">
-    <table>
-        <thead>
-            <tr>
-                <th>NO</th>
-                <th>NAMA</th>
-                <th>ALAMAT</th>
-                <th>BERAS</th>
-                <th>UANG</th>
-            </tr>
-        </thead>
-        <tbody id="data-table-sheet1"></tbody>
-    </table>
-</div>
+            <!-- Sheet 3 -->
+            <div class="tab-pane fade" id="sheet3" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-success">
+                            <tr>
+                                <th>#</th>
+                                <th>Nama</th>
+                                <th>Alamat</th>
+                                <th class="text-end">Uang</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-table-sheet3"></tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center" id="pagination-sheet3"></ul>
+                </nav>
+            </div>
+        </div>
+    </div>
 
-<div id="Sheet2" class="tabcontent">
-    <table>
-        <thead>
-            <tr>
-                <th>NO</th>
-                <th>NAMA</th>
-                <th>ALAMAT</th>
-                <th>BERAS</th>
-                <th>UANG</th>
-            </tr>
-        </thead>
-        <tbody id="data-table-sheet2"></tbody>
-    </table>
-</div>
+    <!-- Bootstrap 5 JS + Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let allData = {
+            sheet1: [],
+            sheet2: [],
+            sheet3: []
+        };
+        let currentSheet = 'sheet1';
+        const itemsPerPage = 10; // Jumlah data per halaman
 
-<div id="Sheet3" class="tabcontent">
-    <table>
-        <thead>
-            <tr>
-                <th>NO</th>
-                <th>NAMA</th>
-                <th>ALAMAT</th>
-                <th>UANG</th>
-            </tr>
-        </thead>
-        <tbody id="data-table-sheet3"></tbody>
-    </table>
-</div>
-
-<script>
-    let allDataSheet1 = []; // Variabel untuk menyimpan data dari Sheet1
-    let allDataSheet2 = []; // Variabel untuk menyimpan data dari Sheet2
-    let allDataSheet3 = []; // Variabel untuk menyimpan data dari Sheet3
-    let currentSheet = 'Sheet1'; // Variabel untuk menyimpan tab yang aktif
-
-    // Fungsi untuk mengambil data dari Google Sheets
-    async function fetchData() {
-        const sheet1Url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPB7YyjPk97RJgwWBxzV7JEWkzePePb901UojPqPOBWb_TJgIwKo-7_VLS12oEMMazBpJD45k-ssGT/pub?output=csv';
-        const sheet2Url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPB7YyjPk97RJgwWBxzV7JEWkzePePb901UojPqPOBWb_TJgIwKo-7_VLS12oEMMazBpJD45k-ssGT/pub?gid=1939128832&output=csv';
-        const sheet3Url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPB7YyjPk97RJgwWBxzV7JEWkzePePb901UojPqPOBWb_TJgIwKo-7_VLS12oEMMazBpJD45k-ssGT/pub?gid=98722503&output=csv';
-
-        // Ambil data dari Sheet1
-        const responseSheet1 = await fetch(sheet1Url);
-        const dataSheet1 = await responseSheet1.text();
-        allDataSheet1 = dataSheet1.split('\n').slice(1);
-
-        // Ambil data dari Sheet2
-        const responseSheet2 = await fetch(sheet2Url);
-        const dataSheet2 = await responseSheet2.text();
-        allDataSheet2 = dataSheet2.split('\n').slice(1);
-
-        // Ambil data dari Sheet3
-        const responseSheet3 = await fetch(sheet3Url);
-        const dataSheet3 = await responseSheet3.text();
-        allDataSheet3 = dataSheet3.split('\n').slice(1);
-
-        // Tampilkan data dari Sheet1 secara default
-        displayData(allDataSheet1, 'data-table-sheet1');
-    }
-
-    // Fungsi untuk memformat uang dengan pemisah titik
-    function formatUang(nilai) {
-        return `Rp ${parseInt(nilai).toLocaleString('id-ID')}`;
-    }
-
-    // Fungsi untuk menampilkan data di tabel
-    function displayData(data, tableId) {
-        const tbody = document.getElementById(tableId);
-        tbody.innerHTML = ''; // Kosongkan tabel sebelum menambahkan data baru
-
-        let totalUang = 0; // Variabel untuk menyimpan total uang
-
-        data.forEach(row => {
-            const columns = row.split(',');
-            const tr = document.createElement('tr');
-
-            // Jika KETERANGAN adalah "LUNAS", tambahkan class "lunas"
-            if (columns[4]?.trim().toUpperCase() === 'LUNAS' || columns[5]?.trim().toUpperCase() === 'LUNAS') {tr.classList.add('lunas');
-}
-
-
-            // Tampilkan kolom sesuai dengan tab yang aktif
-            columns.slice(0, tableId === 'data-table-sheet3' ? 4 : 5).forEach((column, index) => {
-                const td = document.createElement('td');
-                let cellContent = column.trim();
-
-                // Jika data kosong, isi dengan "-"
-                if (!cellContent) {
-                    cellContent = '-';
-                }
-
-                // Format kolom UANG dengan menambahkan "Rp" dan pemisah titik
-                if ((tableId === 'data-table-sheet3' && index === 3) || (tableId !== 'data-table-sheet3' && index === 4)) {
-                    if (cellContent !== '-') {
-                        cellContent = formatUang(cellContent);
-                        totalUang += parseInt(column.trim()); // Tambahkan ke total uang
-                    } else {
-                        cellContent = '-';
-                    }
-                }
-
-                td.textContent = cellContent;
-                if (index === 1) {
-                    td.style.textAlign = 'left'; // Kolom NAMA rata kiri
-                }
-                tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
+        // Format Currency
+        const formatter = new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
         });
 
-        // Tampilkan total uang
-        document.getElementById('totalUang').textContent = `Total Uang: ${formatUang(totalUang)}`;
-    }
+        async function fetchData() {
+            const urls = {
+                sheet1: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPB7YyjPk97RJgwWBxzV7JEWkzePePb901UojPqPOBWb_TJgIwKo-7_VLS12oEMMazBpJD45k-ssGT/pub?output=csv',
+                sheet2: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPB7YyjPk97RJgwWBxzV7JEWkzePePb901UojPqPOBWb_TJgIwKo-7_VLS12oEMMazBpJD45k-ssGT/pub?gid=1939128832&output=csv',
+                sheet3: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTPB7YyjPk97RJgwWBxzV7JEWkzePePb901UojPqPOBWb_TJgIwKo-7_VLS12oEMMazBpJD45k-ssGT/pub?gid=98722503&output=csv'
+            };
 
-    // Fungsi untuk mencari data
-    function searchData() {
-        const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
-        let filteredData;
-        if (currentSheet === 'Sheet1') {
-            filteredData = allDataSheet1.filter(row => row.toLowerCase().includes(searchTerm));
-        } else if (currentSheet === 'Sheet2') {
-            filteredData = allDataSheet2.filter(row => row.toLowerCase().includes(searchTerm));
-        } else if (currentSheet === 'Sheet3') {
-            filteredData = allDataSheet3.filter(row => row.toLowerCase().includes(searchTerm));
+            for (const sheet in urls) {
+                const response = await fetch(urls[sheet]);
+                const data = await response.text();
+                allData[sheet] = data.split('\n').slice(1);
+            }
+            
+            updateTable();
         }
 
-        const tableId = `data-table-${currentSheet.toLowerCase()}`;
-        displayData(filteredData, tableId);
-    }
+        function updateTable(page = 1) {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const currentData = allData[currentSheet];
+            let total = 0;
 
-    // Fungsi untuk menangani tombol Enter
-    function handleKeyPress(event) {
-        if (event.key === 'Enter') {
-            searchData(); // Jalankan pencarian saat tombol Enter ditekan
+            const filteredData = currentData.filter(row => {
+                const [no, nama, alamat, beras, uang, status] = row.split(',');
+                const matchesSearch = nama.toLowerCase().includes(searchTerm) || alamat.toLowerCase().includes(searchTerm);
+                const matchesStatus = !statusFilter || status.trim().toUpperCase() === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+
+            // Pagination Logic
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedData = filteredData.slice(startIndex, endIndex);
+
+            const tbody = document.getElementById(`data-table-${currentSheet}`);
+            tbody.innerHTML = paginatedData.map(row => {
+                const [no, nama, alamat, beras, uang, status] = row.split(',');
+                const statusClass = status.trim().toUpperCase() === 'LUNAS' ? 'bg-success' : 'bg-warning';
+                const uangValue = parseInt(uang) || 0;
+                total += uangValue;
+
+                return `
+                    <tr>
+                        <td>${no}</td>
+                        <td>${nama || '-'}</td>
+                        <td>${alamat || '-'}</td>
+                        ${currentSheet !== 'sheet3' ? `<td class="text-end">${beras || '-'}</td>` : ''}
+                        <td class="text-end currency">${formatter.format(uangValue)}</td>
+                        <td><span class="badge ${statusClass} status-badge">${status}</span></td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('totalUang').textContent = formatter.format(total);
+
+            // Update Pagination
+            updatePagination(filteredData.length, page);
         }
-    }
 
-    // Fungsi untuk beralih antara tab
-    function openTab(event, sheetName) {
-        currentSheet = sheetName;
+        function updatePagination(totalItems, currentPage) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const paginationContainer = document.getElementById(`pagination-${currentSheet}`);
+            paginationContainer.innerHTML = '';
 
-        // Sembunyikan semua tab content
-        const tabcontents = document.getElementsByClassName('tabcontent');
-        for (let i = 0; i < tabcontents.length; i++) {
-            tabcontents[i].style.display = 'none';
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                li.innerHTML = `<a class="page-link" href="#" data-page="${i}">${i}</a>`;
+                li.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    updateTable(i);
+                });
+                paginationContainer.appendChild(li);
+            }
         }
 
-        // Hapus class "active" dari semua tab buttons
-        const tablinks = document.getElementsByClassName('tablinks');
-        for (let i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(' active', '');
-        }
+        // Event Listeners
+        document.getElementById('searchInput').addEventListener('input', () => updateTable(1));
+        document.getElementById('statusFilter').addEventListener('change', () => updateTable(1));
+        document.getElementById('clearSearch').addEventListener('click', () => {
+            document.getElementById('searchInput').value = '';
+            updateTable(1);
+        });
 
-        // Tampilkan tab content yang dipilih dan tambahkan class "active" ke button yang diklik
-        document.getElementById(sheetName).style.display = 'block';
-        event.currentTarget.className += ' active';
+        // Tab Change Event
+        document.querySelectorAll('.nav-link').forEach(tab => {
+            tab.addEventListener('shown.bs.tab', e => {
+                currentSheet = e.target.getAttribute('data-bs-target').replace('#', '');
+                updateTable(1);
+            });
+        });
 
-        // Tampilkan data dari sheet yang dipilih
-        const tableId = `data-table-${sheetName.toLowerCase()}`;
-        const data = sheetName === 'Sheet1' ? allDataSheet1 : sheetName === 'Sheet2' ? allDataSheet2 : allDataSheet3;
-        displayData(data, tableId);
-    }
-
-    // Ambil data dari Google Sheets saat halaman dimuat
-    fetchData();
-
-    // Buka tab Sheet1 secara default
-    document.getElementsByClassName('tablinks')[0].click();
-</script>
-
+        // Initial Load
+        fetchData();
+    </script>
 </body>
 </html>
